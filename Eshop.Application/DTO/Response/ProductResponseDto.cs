@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Eshop.Domain.Entities;
+namespace Eshop.Application.DTO.Response;
 
-public class Product
+public class ProductResponseDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string ImageUrl { get; set; } = string.Empty;
-    public decimal Price { get; set; }
     public string? Description { get; set; }
+    public decimal Price { get; set; }
+    public string ImageUrl { get; set; } = string.Empty;
     public int StockQuantity { get; set; }
-    public int Order {  get; set; }
 }
