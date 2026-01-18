@@ -1,7 +1,12 @@
-﻿using Eshop.API.Controllers;
+﻿using AutoMapper;
+using Eshop.API.Controllers;
 using Eshop.Application.DTO.Request;
 using Eshop.Application.DTO.Response;
 using Eshop.Application.Interfaces;
+using Eshop.Application.Mappings;
+using Eshop.Application.Services;
+using Eshop.Infrastructure.Mocks;
+using Eshop.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -44,20 +49,19 @@ namespace Eshop.UnitTests
         {
             // Arrange
             var productId = Guid.NewGuid();
-
-            var mockProductService = new Mock<IProductService>();
-            mockProductService
+            
+            _mockService
                 .Setup(x => x.GetByIdAsync(productId))
                 .ReturnsAsync((ProductResponseDto?)null);
 
-            var controller = new ProductsController(mockProductService.Object);
+            var controller = new ProductsController(_mockService.Object);
 
             // Act
             var result = await controller.GetProduct(productId);
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
-            mockProductService.Verify(x => x.GetByIdAsync(productId), Times.Once);
+            _mockService.Verify(x => x.GetByIdAsync(productId), Times.Once);
         }
 
         [Fact]
@@ -147,5 +151,53 @@ namespace Eshop.UnitTests
             Assert.IsType<NotFoundResult>(result);
         }
 
+        [Fact]
+        public async Task GetProducts_WithListOfProducts_ReturnsOk()
+        {
+            // Arrange
+            var mockProducts = new List<ProductResponseDto>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Product 1" },
+                new() { Id = Guid.NewGuid(), Name = "Product 2" }
+            };
+            _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(mockProducts);
+
+            // Act
+            var result = await _controller.GetProducts();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedProducts = Assert.IsAssignableFrom<IEnumerable<ProductResponseDto>>(okResult.Value);
+            Assert.Equal(2, returnedProducts.Count());
+        }
+    }
+
+    public class ProductControllerTests_DataLayer
+    {
+        [Fact]
+        public async Task GetProduct_WhenProductExists_ReturnsOk()
+        {
+            // 1. Arrange 
+            var mockData = ProductMockData.GetMockProducts();
+            var existingProduct = mockData.First();
+            var productId = existingProduct.Id;
+
+            var mockRepo = new MockProductRepository();
+            
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>());
+            var mapper = config.CreateMapper();
+
+            var realService = new ProductService(mockRepo, mapper);
+            var controller = new ProductsController(realService);
+
+            // 2. Act
+            var result = await controller.GetProduct(productId);
+
+            // 3. Assert
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedProduct = Assert.IsType<ProductResponseDto>(okResult.Value);
+
+            Assert.Equal(productId, returnedProduct.Id);
+        }
     }
 }
