@@ -52,6 +52,11 @@ public class ProductService : IProductService
 
     public async Task<bool> UpdateStockAsync(Guid productId, UpdateStockRequestDto request)
     {
+        if (request.NewQuantity < 0)
+        {
+            throw new ArgumentException("Quantity must be zero or greater.");
+        }
+
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null) return false;
 
