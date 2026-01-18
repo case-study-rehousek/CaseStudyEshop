@@ -2,6 +2,8 @@ using Eshop.Domain.Interfaces;
 using Eshop.Infrastructure.Data;
 using Eshop.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,21 @@ builder.Services.AddScoped<Eshop.Application.Interfaces.IProductService, Eshop.A
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Eshop API",
+        Version = "v1",
+        Description = "API for managing products and stock in the Eshop Case Study."
+    });
+
+    // Toto propojí vaše /// komentáøe se Swaggerem
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
