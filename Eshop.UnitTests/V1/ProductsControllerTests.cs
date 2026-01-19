@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Eshop.API.Controllers;
+using Eshop.API.Controllers.V1;
 using Eshop.Application.DTO.Request;
 using Eshop.Application.DTO.Response;
 using Eshop.Application.Interfaces;
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 
-namespace Eshop.UnitTests
+namespace Eshop.UnitTests.V1
 {
     public class ProductsControllerTests
     {
