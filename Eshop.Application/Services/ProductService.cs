@@ -4,7 +4,7 @@ using Eshop.Application.DTO.Response;
 using Eshop.Application.Interfaces;
 using Eshop.Domain.Entities;
 using Eshop.Domain.Interfaces;
-
+using System.Linq;
 
 namespace Eshop.Application.Services;
 
@@ -32,8 +32,18 @@ public class ProductService : IProductService
         return _mapper.Map<IEnumerable<ProductResponseDto>>(products);
     }
 
+    public async Task<IEnumerable<ProductResponseDto>> GetPagedProductsAsync(int pageNumber, int pageSize)
+    {
+        var products = await _productRepository.GetPagedAsync(pageNumber, pageSize);
+        return _mapper.Map<IEnumerable<ProductResponseDto>>(products);
+    }
+
     public async Task<Guid> CreateAsync(CreateProductRequestDto request)
     {
+        var maxOrder = await _productRepository.GetMaxOrder();
+
+        int nextOrder = (maxOrder ?? 0) + 1;
+
         var product = new Product
         {
             Id = Guid.NewGuid(),
@@ -41,7 +51,8 @@ public class ProductService : IProductService
             Price = request.Price,
             StockQuantity = request.StockQuantity,
             ImageUrl = request.ImageUrl,
-            Description = request.Description
+            Description = request.Description,
+            Order = nextOrder
         };
 
         await _productRepository.AddAsync(product);
