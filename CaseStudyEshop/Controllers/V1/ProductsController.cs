@@ -1,15 +1,16 @@
 ﻿using Eshop.Application.DTO.Request;
 using Eshop.Application.DTO.Response;
 using Eshop.Application.Interfaces;
-using Eshop.Domain.Entities;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Eshop.API.Controllers
+namespace Eshop.API.Controllers.V1
 {
     /// <summary>
     /// Provides endpoints for managing products, including retrieval, creation, and sorting.
     /// </summary>
-    [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
