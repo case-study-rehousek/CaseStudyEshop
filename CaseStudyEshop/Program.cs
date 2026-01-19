@@ -1,7 +1,9 @@
+using Asp.Versioning;
 using Eshop.Domain.Interfaces;
 using Eshop.Infrastructure.Data;
 using Eshop.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -14,22 +16,45 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<Eshop.Application.Interfaces.IProductService, Eshop.Application.Services.ProductService>();
 
 builder.Services.AddControllers();
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+})
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    // Definujeme dokument pro verzi 1.0
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "Eshop API",
+        Title = "E-shop API",
         Version = "v1",
-        Description = "API for managing products and stock in the Eshop Case Study."
+        Description = "API pro správu e-shopu"
+    });
+
+    // Definujeme dokument pro verzi 2.0
+    options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "E-shop API",
+        Version = "v2",
+        Description = "API pro správu e-shopu"
     });
 
     // Toto propojí vaše /// komentáøe se Swaggerem
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
+    options.IncludeXmlComments(xmlPath);
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -56,7 +81,12 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        // Definujeme, kde Swagger najde JSON definici pro v1
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "E-shop API v1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "E-shop API v2");
+    });
 }
 
 app.UseHttpsRedirection();
