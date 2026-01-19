@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 
 namespace Eshop.Infrastructure.Mocks;
 
+/// <summary>
+/// Provides static mock data for products used during development and testing.
+/// </summary>
 public static class ProductMockData
 {
+    /// <summary>
+    /// Generates a predefined list of mock product entities.
+    /// </summary>
+    /// <returns>A list of initialized <see cref="Product"/> objects.</returns>
     public static List<Product> GetMockProducts()
     {
         return new List<Product>

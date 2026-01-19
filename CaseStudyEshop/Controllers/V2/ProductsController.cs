@@ -76,7 +76,7 @@ namespace Eshop.API.Controllers.V2
         {
             var id = await _productService.CreateAsync(dto);
             // Důležité: Přidáváme verzi do parametrů, aby CreatedAtAction správně vygenerovalo URL
-            return CreatedAtAction(nameof(GetProduct), new { id, version = "1.0" }, id);
+            return CreatedAtAction(nameof(GetProduct), new { id, version = "2.0" }, id);
         }
 
         /// <summary>

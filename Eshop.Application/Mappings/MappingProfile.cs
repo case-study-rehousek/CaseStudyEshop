@@ -14,6 +14,5 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         CreateMap<Product, ProductResponseDto>();
-        // Pokud by se názvy vlastností lišily, použijte .ForMember(...)
     }
 }
