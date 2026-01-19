@@ -6,6 +6,8 @@ public interface IProductRepository
 {
     Task<IEnumerable<Product>> GetAllAsync();
 
+    Task<IEnumerable<Product>> GetPagedAsync(int pageNumber, int pageSize);
+
     Task<Product?> GetByIdAsync(Guid id);
 
     Task AddAsync(Product product);
@@ -13,4 +15,6 @@ public interface IProductRepository
     Task UpdateAsync(Product product);
 
     Task SaveChangesAsync();
+
+    Task<int?> GetMaxOrder();
 }

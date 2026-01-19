@@ -51,4 +51,14 @@ public class ProductRepository : IProductRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<int?> GetMaxOrder()
+    {
+        if (!await _context.Products.AnyAsync())
+        {
+            return null;
+        }
+
+        return await _context.Products.MaxAsync(p => p.Order);
+    }
 }

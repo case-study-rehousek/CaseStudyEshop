@@ -20,6 +20,17 @@ public class MockProductRepository : IProductRepository
         return await Task.FromResult(_products.OrderBy(p => p.Order));
     }
 
+    public async Task<IEnumerable<Product>> GetPagedAsync(int pageNumber, int pageSize)
+    {
+        var pagedProducts = _products
+            .OrderBy(p => p.Order)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return await Task.FromResult(pagedProducts);
+    }
+
     public async Task<Product?> GetByIdAsync(Guid id)
     {
         return await Task.FromResult(_products.FirstOrDefault(p => p.Id == id));
@@ -46,5 +57,14 @@ public class MockProductRepository : IProductRepository
     {
         // Nic se fyzicky neukládá, jen kvůli rozhraní        
         await Task.CompletedTask;
+    }
+
+    public async Task<int?> GetMaxOrder()
+    {
+        if (!_products.Any())
+        {
+            return null;
+        }
+        return await Task.FromResult(_products.Max(p => p.Order));
     }
 }
