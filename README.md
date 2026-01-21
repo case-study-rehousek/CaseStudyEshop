@@ -5,7 +5,6 @@ Modern E-commerce API demonstration.
 ## 🚀 Project Overview
 This project is a robust RESTful API for an E-commerce platform, built with ASP.NET Core. It serves as a demonstration of modern backend development practices, focusing on scalability, maintainability, and clean code architecture.
 
-
 ### 📦 Product Management API (version 1)
 * **Comprehensive Listing:** Endpoint to retrieve all available products in the catalog.
 * **Flexible Creation:** Supports creating new products with minimal required data (Name and Image URL) to streamline onboarding.
@@ -16,8 +15,9 @@ This project is a robust RESTful API for an E-commerce platform, built with ASP.
 * **Paginated Listing:** Endpoint to retrieve products using advanced pagination.
 * **Flexible Creation:** Supports creating new products with minimal required data (Name and Image URL) to streamline onboarding.
 * **Detailed View:** Fetch complete information about a specific product using its unique identifier (ID).
-* **Partial Updates (Stock Management):** Optimized endpoint for granular updates, specifically focused on modifying product stock levels without affecting other properties.
-
+* **High-Performance Stock Update (Async)**:    
+    * **Mechanism**: Implements a **Producer-Consumer pattern** using an in-memory queue (`System.Threading.Channels`).
+    * **Behavior**: Returns `202 Accepted` immediately. The actual database update is processed by a background worker, ensuring high API responsiveness even under heavy load.
  
 ## 🛠 Tech Stack
 * Framework: ASP.NET Core 8.0 (Web API)
