@@ -1,4 +1,7 @@
 using Asp.Versioning;
+using Eshop.API.BackgroundServices;
+using Eshop.Application.Interfaces;
+using Eshop.Application.Services;
 using Eshop.Domain.Interfaces;
 using Eshop.Infrastructure.Data;
 using Eshop.Infrastructure.Repositories;
@@ -58,6 +61,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Register the Queue as a Singleton (it must be the same instance for everyone)
+builder.Services.AddSingleton<IStockUpdateQueueService, StockUpdateQueueService>();
+
+// Register the Worker as a Hosted Service (this starts the background consumer)
+builder.Services.AddHostedService<StockUpdateWorker>();
 
 var app = builder.Build();
 

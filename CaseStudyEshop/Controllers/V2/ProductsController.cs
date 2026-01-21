@@ -15,14 +15,17 @@ namespace Eshop.API.Controllers.V2
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IStockUpdateQueueService _stockUpdateQueueService;
 
         /// <summary>
         /// Initializes a new instance of the ProductsController.
         /// </summary>
         /// <param name="productService">The product service layer.</param>
-        public ProductsController(IProductService productService)
+        /// <param name="stockUpdateQueueService">The stock update Queue service layer.</param>
+        public ProductsController(IProductService productService, IStockUpdateQueueService stockUpdateQueueService)
         {
             _productService = productService;
+            _stockUpdateQueueService = stockUpdateQueueService;
         }
 
         /// <summary>
@@ -80,22 +83,18 @@ namespace Eshop.API.Controllers.V2
         }
 
         /// <summary>
-        /// Updates the stock quantity of an existing product.
+        /// Queues a stock update to be processed asynchronously in the background.
         /// </summary>
-        /// <param name="id">The ID of the product to update.</param>
-        /// <param name="dto">The new stock quantity data.</param>
-        /// <returns>No content on success.</returns>
-        /// <response code="204">Stock updated successfully.</response>
-        /// <response code="404">If the product is not found.</response>
-        [HttpPatch("{id}/stock")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateStock(Guid id, [FromBody] UpdateStockRequestDto dto)
+        /// <param name="id">Product identifier.</param>
+        /// <param name="dto">The new stock quantity.</param>
+        /// <returns>202 Accepted status.</returns>
+        [HttpPost("{id}/stock-async")]
+        public async Task<IActionResult> UpdateStockAsyncQueue(Guid id, [FromBody] UpdateStockRequestDto dto)
         {
-            var success = await _productService.UpdateStockAsync(id, dto);
-            if (!success) return NotFound();
+            await _stockUpdateQueueService.QueueStockUpdateAsync(new UpdateStockTask(id, dto.NewQuantity));
 
-            return NoContent();
+            // 202 Accepted tells the client: "I've got it, I'll process it later."
+            return Accepted();
         }
     }
 }
