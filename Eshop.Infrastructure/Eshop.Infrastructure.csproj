@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eshop.Application\Eshop.Application.csproj" />
-    <ProjectReference Include="..\Eshop.Domain\Eshop.Domain.csproj" />
+    <Compile Remove="Persistence\**" />
+    <EmbeddedResource Remove="Persistence\**" />
+    <None Remove="Persistence\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\" />
+    <ProjectReference Include="..\Eshop.Application\Eshop.Application.csproj" />
+    <ProjectReference Include="..\Eshop.Domain\Eshop.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
