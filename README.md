@@ -41,12 +41,24 @@ Follow these steps to get the project running on your local machine:
 2. Open the solution: Launch the .sln file in Visual Studio 2022.
 3. Run the application: Press F5 or click the Start button to build and run the project.
 
-## 🧪 Testing
+
+## 🧪 How to Test
+### Manual Integration Test (Bulk Stock Update)
+To verify the high-concurrency background processing, you can use the provided PowerShell script which sends 1000 rapid requests to the async endpoint.
+
+1.  **Run the API**: Start the application.
+2.  **Run the Script**: 
+    * **Option A (Terminal)**: Execute the command provided above in PowerShell.
+    * **Option B (Visual Studio)**: Right-click the `TestStockUpdate.ps1` file in Solution Explorer and select **Open with PowerShell ISE** (or Run with PowerShell).
+3.  **Observe:**
+    * **Console**: Watch the API console window to see the StockUpdateWorker processing the queue in real-time.
+    * **Data**: Refresh the Swagger GET /api/v1/products/{id} to see the final StockQuantity matching the last processed request.
+
+### Unit Tests
 To run the unit tests and verify the functionality:
 1. Open the solution in Visual Studio.
 2. Open **Test Explorer**.
 3. Click **Run All Tests** (or use the shortcut `Ctrl + R, A`).
-
 
 ## 📋 Author
 * **Ladislav Řehoušek**
