@@ -25,6 +25,7 @@ This project is a robust RESTful API for an E-commerce platform, built with ASP.
 * Architecture: Clean Architecture / Layered Architecture
 * Versioning: ASP.NET API Versioning (URL-based)
 * Mapping: AutoMapper
+* Unit tests: xUnit, Moq
 * Documentation: Swagger (Swashbuckle) with XML comments
 
 ## ⚙️ Data Model
